@@ -1,20 +1,18 @@
-const Promise = require(`bluebird`)
 const { onCreateNode } = require(`../gatsby-node`);
 
 const createNodeId = jest.fn().mockReturnValue(`uuid-from-gatsby`);
 const createContentDigest = jest.fn().mockReturnValue(`contentDigest`);
-const loadNodeContent = node => Promise.resolve(node.content);
+const loadNodeContent = (node) => Promise.resolve(node.content);
 
 describe("Processing plaintext nodes", () => {
-
   let createNode;
   let createParentChildLink;
   let actions;
 
   beforeEach(() => {
-    createNode = jest.fn()
-    createParentChildLink = jest.fn()
-    actions = { createNode, createParentChildLink }
+    createNode = jest.fn();
+    createParentChildLink = jest.fn();
+    actions = { createNode, createParentChildLink };
   });
 
   const expectNodeCreated = (parent) => {
@@ -25,10 +23,10 @@ describe("Processing plaintext nodes", () => {
           type: "PlainText",
         }),
       })
-    )
+    );
 
     expect(createParentChildLink).toHaveBeenCalled();
-  }
+  };
 
   it("should process plain/text files", async () => {
     const node = {
@@ -36,8 +34,8 @@ describe("Processing plaintext nodes", () => {
       internal: {
         type: "File",
         mediaType: "text/plain",
-        extension: "txt"
-      }
+        extension: "txt",
+      },
     };
 
     await onCreateNode({
@@ -47,7 +45,6 @@ describe("Processing plaintext nodes", () => {
       createNodeId,
       createContentDigest,
     });
-
 
     expectNodeCreated("42");
   });
@@ -57,8 +54,8 @@ describe("Processing plaintext nodes", () => {
       id: "21",
       internal: {
         type: "File",
-        mediaType: "application/octet-stream"
-      }
+        mediaType: "application/octet-stream",
+      },
     };
 
     await onCreateNode({
@@ -68,7 +65,6 @@ describe("Processing plaintext nodes", () => {
       createNodeId,
       createContentDigest,
     });
-
 
     expectNodeCreated("21");
   });
@@ -78,8 +74,8 @@ describe("Processing plaintext nodes", () => {
       id: "21",
       internal: {
         type: "File",
-        mediaType: "image/png"
-      }
+        mediaType: "image/png",
+      },
     };
 
     await onCreateNode({
@@ -90,9 +86,6 @@ describe("Processing plaintext nodes", () => {
       createContentDigest,
     });
 
-
     expect(createNode).toHaveBeenCalledTimes(0);
   });
 });
-
-
