@@ -1,8 +1,8 @@
 export async function onCreateNode(
   { node, actions, loadNodeContent, createNodeId, createContentDigest },
-  options
+  options = { mimeTypes: [] }
 ) {
-  if (node.internal.type !== "File") {
+  if (node.internal.type !== 'File') {
     return;
   }
 
@@ -24,12 +24,12 @@ export async function onCreateNode(
     parent: node.id,
     internal: {
       contentDigest: createContentDigest(content),
-      type: "SourceCode",
-    },
+      type: 'SourceCode'
+    }
   };
   createNode(sourceCodeNode);
   createParentChildLink({
     parent: node,
-    child: sourceCodeNode,
+    child: sourceCodeNode
   });
 }

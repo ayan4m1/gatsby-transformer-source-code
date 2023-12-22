@@ -4,7 +4,7 @@ const createNodeId = jest.fn().mockReturnValue(`uuid-from-gatsby`);
 const createContentDigest = jest.fn().mockReturnValue(`contentDigest`);
 const loadNodeContent = (node) => Promise.resolve(node.content);
 
-describe("Processing plaintext nodes", () => {
+describe('Processing source code nodes', () => {
   let createNode;
   let createParentChildLink;
   let actions;
@@ -20,22 +20,21 @@ describe("Processing plaintext nodes", () => {
       expect.objectContaining({
         parent: parent,
         internal: expect.objectContaining({
-          type: "PlainText",
-        }),
+          type: 'SourceCode'
+        })
       })
     );
 
     expect(createParentChildLink).toHaveBeenCalled();
   };
 
-  it("should process plain/text files", async () => {
+  it('should process text files without mimeTypes options', async () => {
     const node = {
-      id: "42",
+      id: '42',
       internal: {
-        type: "File",
-        mediaType: "text/plain",
-        extension: "txt",
-      },
+        type: 'File',
+        mediaType: 'text/plain'
+      }
     };
 
     await onCreateNode({
@@ -43,19 +42,19 @@ describe("Processing plaintext nodes", () => {
       actions,
       loadNodeContent,
       createNodeId,
-      createContentDigest,
+      createContentDigest
     });
 
-    expectNodeCreated("42");
+    expectNodeCreated('42');
   });
 
-  it("should process files without extension", async () => {
+  it('should process ambiguous files without mimeTypes option', async () => {
     const node = {
-      id: "21",
+      id: '21',
       internal: {
-        type: "File",
-        mediaType: "application/octet-stream",
-      },
+        type: 'File',
+        mediaType: 'application/octet-stream'
+      }
     };
 
     await onCreateNode({
@@ -63,29 +62,55 @@ describe("Processing plaintext nodes", () => {
       actions,
       loadNodeContent,
       createNodeId,
-      createContentDigest,
+      createContentDigest
     });
 
-    expectNodeCreated("21");
+    expectNodeCreated('21');
   });
 
-  it("should ignore non text files", async () => {
+  it('should ignore files not specified in mimeTypes option', async () => {
     const node = {
-      id: "21",
+      id: '21',
       internal: {
-        type: "File",
-        mediaType: "image/png",
-      },
+        type: 'File',
+        mediaType: 'image/png'
+      }
     };
 
-    await onCreateNode({
-      node,
-      actions,
-      loadNodeContent,
-      createNodeId,
-      createContentDigest,
-    });
+    await onCreateNode(
+      {
+        node,
+        actions,
+        loadNodeContent,
+        createNodeId,
+        createContentDigest
+      },
+      { mimeTypes: ['image/jpeg'] }
+    );
 
     expect(createNode).toHaveBeenCalledTimes(0);
+  });
+
+  it('should process files specified in mimeTypes option', async () => {
+    const node = {
+      id: '21',
+      internal: {
+        type: 'File',
+        mediaType: 'image/png'
+      }
+    };
+
+    await onCreateNode(
+      {
+        node,
+        actions,
+        loadNodeContent,
+        createNodeId,
+        createContentDigest
+      },
+      { mimeTypes: ['image/png'] }
+    );
+
+    expect(createNode).toHaveBeenCalledTimes(1);
   });
 });
