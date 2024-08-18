@@ -18,12 +18,12 @@
     "text"
   ],
   "peerDependencies": {
-    "gatsby": "^5.0.0"
+    "gatsby": "^5.13.7"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
-    "prettier": "^3.2.4"
+    "prettier": "^3.3.3"
   },
   "scripts": {
     "test": "jest"
